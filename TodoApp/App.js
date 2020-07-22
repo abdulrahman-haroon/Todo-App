@@ -1,6 +1,14 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { StyleSheet, Text, View, FlatList } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Alert,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import Header from "./components/header";
 import TodoItem from "./components/todoItem";
 import AddTodo from "./components/addTodo";
@@ -17,26 +25,39 @@ export default function App() {
     });
   };
   const submitHandler = (text) => {
-    setTodos((prevTodos) => {
-      return [{ text: text, key: Math.random.toString() }, ...prevTodos];
-    });
+    let lengthT = text.length;
+    if (lengthT > 3) {
+      setTodos((prevTodos) => {
+        return [{ text: text, key: Math.random.toString() }, ...prevTodos];
+      });
+    } else {
+      Alert.alert("Sorry!", "Todo must be over 3 character long.", [
+        { text: "Understood", onPress: () => console.log("Alert Closed") },
+      ]);
+    }
   };
   return (
-    <View style={styles.container}>
-      <Header />
-      <View style={styles.content}>
-        <AddTodo submitHandler={submitHandler} />
-        <View style={styles.list}>
-          <FlatList
-            data={todos}
-            renderItem={({ item }) => (
-              <TodoItem item={item} handlePress={handlePress} />
-            )}
-          />
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <View style={styles.container}>
+        <Header />
+        <View style={styles.content}>
+          <AddTodo submitHandler={submitHandler} />
+          <View style={styles.list}>
+            <FlatList
+              data={todos}
+              renderItem={({ item }) => (
+                <TodoItem item={item} handlePress={handlePress} />
+              )}
+            />
+          </View>
         </View>
+        <StatusBar style="auto" />
       </View>
-      <StatusBar style="auto" />
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
